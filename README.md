@@ -35,7 +35,7 @@ Nothing here is a to-do list clone with an AI wrapper — the specific, memorabl
 
 ## d. The AI feature
 
-StudySplit uses **Google Gemini** (`gemini-2.0-flash`, called server-side from Next.js API routes) for two distinct AI-driven steps. Both use structured JSON output (`responseSchema`) so the model's response plugs directly into the UI without brittle text-parsing.
+StudySplit uses **Google Gemini** (`gemini-2.5-flash-lite`, called server-side from Next.js API routes) for two distinct AI-driven steps. Both use structured JSON output (`responseSchema`) so the model's response plugs directly into the UI without brittle text-parsing.
 
 ### 1. Initial task breakdown — system prompt (`lib/gemini.ts`)
 
@@ -95,7 +95,7 @@ Both prompts and their JSON schemas are in [`lib/gemini.ts`](./lib/gemini.ts); t
 |---|---|
 | Framework | Next.js 14 (App Router, TypeScript) |
 | Styling | Tailwind CSS (custom design tokens — see below) |
-| AI model | Google Gemini `gemini-2.0-flash` via the Gemini API (free tier) |
+| AI model | Google Gemini `gemini-2.5-flash-lite` via the Gemini API (free tier) |
 | Data storage | Browser `localStorage` — no backend database required to run this project |
 | Hosting | Vercel (free Hobby tier) |
 | Version control | GitHub |
