@@ -1,4 +1,10 @@
-const GEMINI_MODEL = "gemini-2.0-flash";
+// gemini-2.0-flash is no longer part of the free tier lineup (as of 2026, free
+// tier covers only 2.5 Pro / 2.5 Flash / 2.5 Flash-Lite) and returns a hard
+// limit:0 quota error on free-tier keys. gemini-2.5-flash-lite has the most
+// generous free daily quota of the current lineup, so it's the safest default
+// for a student project. Swap to "gemini-2.5-flash" for higher quality if you
+// have quota to spare.
+const GEMINI_MODEL = "gemini-2.5-flash-lite";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 interface GeminiCallOptions {
