@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { breakdownAssignment } from "@/lib/gemini";
+import { breakdownAssignment } from "@/lib/ai";
 
 export async function POST(req: NextRequest) {
   try {

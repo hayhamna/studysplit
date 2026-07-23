@@ -35,9 +35,9 @@ Nothing here is a to-do list clone with an AI wrapper — the specific, memorabl
 
 ## d. The AI feature
 
-StudySplit uses **Google Gemini** (`gemini-2.5-flash-lite`, called server-side from Next.js API routes) for two distinct AI-driven steps. Both use structured JSON output (`responseSchema`) so the model's response plugs directly into the UI without brittle text-parsing.
+StudySplit uses **Groq** (`llama-3.3-70b-versatile`, called server-side from Next.js API routes) for two distinct AI-driven steps. Both use JSON mode (`response_format: { type: "json_object" }`) so the model's response plugs directly into the UI without brittle text-parsing.
 
-### 1. Initial task breakdown — system prompt (`lib/gemini.ts`)
+### 1. Initial task breakdown — system prompt (`lib/ai.ts`)
 
 ```
 You are StudySplit's task-planning assistant. Group project members give you an
@@ -61,7 +61,7 @@ that were not listed. Every task must be assigned to exactly one of the provided
 member IDs.
 ```
 
-### 2. Rebalance on unavailability — system prompt (`lib/gemini.ts`)
+### 2. Rebalance on unavailability — system prompt (`lib/ai.ts`)
 
 ```
 You are StudySplit's rebalancing assistant. A member of a group project has just
@@ -87,7 +87,7 @@ Return which task IDs moved and their new assigneeId. Do not modify task titles,
 descriptions or hours.
 ```
 
-Both prompts and their JSON schemas are in [`lib/gemini.ts`](./lib/gemini.ts); the two API routes that call them are [`app/api/breakdown/route.ts`](./app/api/breakdown/route.ts) and [`app/api/rebalance/route.ts`](./app/api/rebalance/route.ts).
+Both prompts and their JSON schemas are in [`lib/ai.ts`](./lib/ai.ts); the two API routes that call them are [`app/api/breakdown/route.ts`](./app/api/breakdown/route.ts) and [`app/api/rebalance/route.ts`](./app/api/rebalance/route.ts).
 
 ## e. Tools, services, and AI models used
 
@@ -95,7 +95,7 @@ Both prompts and their JSON schemas are in [`lib/gemini.ts`](./lib/gemini.ts); t
 |---|---|
 | Framework | Next.js 14 (App Router, TypeScript) |
 | Styling | Tailwind CSS (custom design tokens — see below) |
-| AI model | Google Gemini `gemini-2.5-flash-lite` via the Gemini API (free tier) |
+| AI model | Groq `llama-3.3-70b-versatile` via the Groq API (free tier, no credit card) |
 | Data storage | Browser `localStorage` — no backend database required to run this project |
 | Hosting | Vercel (free Hobby tier) |
 | Version control | GitHub |
@@ -121,7 +121,7 @@ Both prompts and their JSON schemas are in [`lib/gemini.ts`](./lib/gemini.ts); t
 
 ### Prerequisites
 - Node.js 18+
-- A free Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey)
+- A free Groq API key from [console.groq.com/keys](https://console.groq.com/keys)
 
 ### Local setup
 
@@ -130,7 +130,7 @@ git clone https://github.com/YOUR_USERNAME/studysplit.git
 cd studysplit
 npm install
 cp .env.example .env.local
-# edit .env.local and paste your Gemini API key into GEMINI_API_KEY
+# edit .env.local and paste your Groq API key into GROQ_API_KEY
 npm run dev
 ```
 
@@ -142,7 +142,7 @@ Open [http://localhost:3000](http://localhost:3000).
 2. Go to [vercel.com](https://vercel.com), sign in with GitHub, and click **Add New → Project**.
 3. Import the `studysplit` repo.
 4. Under **Environment Variables**, add:
-   - `GEMINI_API_KEY` = your Gemini API key
+   - `GROQ_API_KEY` = your Groq API key
 5. Click **Deploy**. Vercel gives you a public URL — paste it into section (b) above.
 
 No database setup, no Docker, no paid tier required anywhere in this stack.
@@ -163,5 +163,5 @@ components/
 lib/
   types.ts                  → shared TypeScript data model
   storage.ts                → localStorage persistence
-  gemini.ts                 → Gemini API calls + both system prompts
+  ai.ts                      → Groq API calls + both system prompts
 ```

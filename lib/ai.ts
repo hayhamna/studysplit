@@ -1,52 +1,47 @@
-// gemini-2.0-flash is no longer part of the free tier lineup (as of 2026, free
-// tier covers only 2.5 Pro / 2.5 Flash / 2.5 Flash-Lite) and returns a hard
-// limit:0 quota error on free-tier keys. gemini-2.5-flash-lite has the most
-// generous free daily quota of the current lineup, so it's the safest default
-// for a student project. Swap to "gemini-2.5-flash" for higher quality if you
-// have quota to spare.
-const GEMINI_MODEL = "gemini-2.5-flash-lite";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+// Groq: free, no credit card, no billing tiers, no region restrictions —
+// far more reliable for a student project than Gemini's free tier has been.
+// Groq's API is OpenAI-compatible, so we use plain fetch + JSON mode.
+const GROQ_MODEL = "llama-3.3-70b-versatile";
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-interface GeminiCallOptions {
+interface GroqCallOptions {
   systemInstruction: string;
   userPrompt: string;
-  responseSchema: Record<string, unknown>;
 }
 
-async function callGemini({
-  systemInstruction,
-  userPrompt,
-  responseSchema,
-}: GeminiCallOptions) {
-  const apiKey = process.env.GEMINI_API_KEY;
+async function callGroq({ systemInstruction, userPrompt }: GroqCallOptions) {
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     throw new Error(
-      "GEMINI_API_KEY is not set. Add it as an environment variable (see README)."
+      "GROQ_API_KEY is not set. Add it as an environment variable (see README)."
     );
   }
 
-  const res = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
+  const res = await fetch(GROQ_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
     body: JSON.stringify({
-      systemInstruction: { parts: [{ text: systemInstruction }] },
-      contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-      generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema,
-        temperature: 0.4,
-      },
+      model: GROQ_MODEL,
+      temperature: 0.4,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: systemInstruction },
+        { role: "user", content: userPrompt },
+      ],
     }),
   });
 
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(`Gemini API error (${res.status}): ${errText}`);
+    throw new Error(`Groq API error (${res.status}): ${errText}`);
   }
 
   const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error("Gemini returned an empty response.");
+  const text = data?.choices?.[0]?.message?.content;
+  if (!text) throw new Error("Groq returned an empty response.");
   return JSON.parse(text);
 }
 
@@ -60,28 +55,15 @@ Your job:
 3. Assign each task to the teammate whose stated strengths best match it, while keeping total assigned hours roughly proportional to each person's stated weekly availability. Do not give one person everything just because they look most skilled — balance load first, then match skill.
 4. Write a short, plain-English rationale (2-4 sentences) explaining the overall split logic, so the group understands why it's fair.
 
-Be concrete and specific to the assignment text given. Never invent teammates that were not listed. Every task must be assigned to exactly one of the provided member IDs.`;
+Be concrete and specific to the assignment text given. Never invent teammates that were not listed. Every task must be assigned to exactly one of the provided member IDs.
 
-const breakdownSchema = {
-  type: "object",
-  properties: {
-    rationale: { type: "string" },
-    tasks: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          title: { type: "string" },
-          description: { type: "string" },
-          estimatedHours: { type: "number" },
-          assigneeId: { type: "string" },
-        },
-        required: ["title", "description", "estimatedHours", "assigneeId"],
-      },
-    },
-  },
-  required: ["rationale", "tasks"],
-};
+Respond ONLY with valid JSON in exactly this shape, no other text:
+{
+  "rationale": "string",
+  "tasks": [
+    { "title": "string", "description": "string", "estimatedHours": number, "assigneeId": "string" }
+  ]
+}`;
 
 export async function breakdownAssignment(
   assignmentDescription: string,
@@ -100,13 +82,9 @@ ${members
   )
   .join("\n")}
 
-Return the task breakdown as JSON matching the schema.`;
+Return the task breakdown as JSON matching the required shape.`;
 
-  return callGemini({
-    systemInstruction: BREAKDOWN_SYSTEM_PROMPT,
-    userPrompt,
-    responseSchema: breakdownSchema,
-  });
+  return callGroq({ systemInstruction: BREAKDOWN_SYSTEM_PROMPT, userPrompt });
 }
 
 // ---------- Feature 2: rebalance tasks when someone becomes unavailable ----------
@@ -121,26 +99,15 @@ Rules:
 5. It is fine to split load unevenly if strengths clearly justify it, but always explain why in the rationale.
 6. Write a short, plain-English rationale (2-4 sentences) a stressed group of students would actually find reassuring and clear.
 
-Return which task IDs moved and their new assigneeId. Do not modify task titles, descriptions or hours.`;
+Return which task IDs moved and their new assigneeId. Do not modify task titles, descriptions or hours.
 
-const rebalanceSchema = {
-  type: "object",
-  properties: {
-    rationale: { type: "string" },
-    reassignments: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          taskId: { type: "string" },
-          newAssigneeId: { type: "string" },
-        },
-        required: ["taskId", "newAssigneeId"],
-      },
-    },
-  },
-  required: ["rationale", "reassignments"],
-};
+Respond ONLY with valid JSON in exactly this shape, no other text:
+{
+  "rationale": "string",
+  "reassignments": [
+    { "taskId": "string", "newAssigneeId": "string" }
+  ]
+}`;
 
 export async function rebalanceTasks(params: {
   unavailableMember: { id: string; name: string };
@@ -179,11 +146,7 @@ ${remainingMembers
   )
   .join("\n")}
 
-Return the reassignments as JSON matching the schema.`;
+Return the reassignments as JSON matching the required shape.`;
 
-  return callGemini({
-    systemInstruction: REBALANCE_SYSTEM_PROMPT,
-    userPrompt,
-    responseSchema: rebalanceSchema,
-  });
+  return callGroq({ systemInstruction: REBALANCE_SYSTEM_PROMPT, userPrompt });
 }

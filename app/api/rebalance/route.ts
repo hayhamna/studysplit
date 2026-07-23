@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { rebalanceTasks } from "@/lib/gemini";
+import { rebalanceTasks } from "@/lib/ai";
 
 export async function POST(req: NextRequest) {
   try {
