@@ -8,6 +8,7 @@ import { Project, Task, TaskStatus } from "@/lib/types";
 import LoadBar from "@/components/LoadBar";
 import TaskBoard from "@/components/TaskBoard";
 import RationalePanel from "@/components/RationalePanel";
+import Logo from "@/components/Logo";
 
 export default function ProjectPage() {
   const params = useParams();
@@ -38,15 +39,24 @@ export default function ProjectPage() {
   }, [project]);
 
   if (project === undefined) {
-    return <main className="max-w-5xl mx-auto px-6 py-16 text-ink/50">Loading…</main>;
+    return (
+      <main className="max-w-5xl mx-auto px-6 py-16 flex items-center gap-2 text-ink/50">
+        <span className="flex gap-1" aria-hidden="true">
+          <span className="h-1.5 w-1.5 rounded-full bg-ink/30 animate-pulseSoft [animation-delay:0ms]" />
+          <span className="h-1.5 w-1.5 rounded-full bg-ink/30 animate-pulseSoft [animation-delay:150ms]" />
+          <span className="h-1.5 w-1.5 rounded-full bg-ink/30 animate-pulseSoft [animation-delay:300ms]" />
+        </span>
+        Loading project…
+      </main>
+    );
   }
 
   if (project === null) {
     return (
       <main className="max-w-5xl mx-auto px-6 py-16">
         <p className="text-ink/60">Project not found on this device/browser.</p>
-        <button onClick={() => router.push("/")} className="mt-4 text-teal-dark underline text-sm">
-          Back home
+        <button onClick={() => router.push("/")} className="mt-4 text-teal-dark hover:underline underline-offset-2 text-sm">
+          ← Back home
         </button>
       </main>
     );
@@ -162,34 +172,40 @@ export default function ProjectPage() {
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-      <button onClick={() => router.push("/")} className="text-xs font-mono text-ink/40 hover:text-teal-dark mb-4">
-        ← all projects
-      </button>
+    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+      <div className="flex items-center justify-between mb-6">
+        <Logo size={22} />
+        <button
+          onClick={() => router.push("/")}
+          className="text-xs font-mono text-ink/40 hover:text-teal-dark transition-colors"
+        >
+          ← all projects
+        </button>
+      </div>
 
-      <h1 className="font-display text-3xl font-semibold text-ink mb-1">{project.name}</h1>
-      <p className="text-sm text-ink/50 mb-6 max-w-2xl">{project.assignmentDescription}</p>
+      <h1 className="font-display text-2xl sm:text-3xl font-semibold text-ink mb-1.5 tracking-tight">
+        {project.name}
+      </h1>
+      <p className="text-sm text-ink/50 mb-6 max-w-2xl leading-relaxed">{project.assignmentDescription}</p>
 
-      {project.breakdownRationale && (
-        <div className="mb-6">
+      <div className="space-y-4 mb-2">
+        {project.breakdownRationale && (
           <RationalePanel
             label="original split"
             text={project.breakdownRationale}
             tone="teal"
             onDismiss={() => updateProject((p) => ({ ...p, breakdownRationale: undefined }))}
           />
-        </div>
-      )}
+        )}
 
-      {rationale && (
-        <div className="mb-6">
-          <RationalePanel {...rationale} onDismiss={() => setRationale(null)} />
-        </div>
-      )}
+        {rationale && <RationalePanel {...rationale} onDismiss={() => setRationale(null)} />}
 
-      {error && <p className="text-sm text-coral mb-4">{error}</p>}
+        {error && (
+          <p className="text-sm text-coral bg-coral-50 border border-coral/20 rounded-lg px-3 py-2">{error}</p>
+        )}
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
         <aside className="lg:col-span-1 space-y-3">
           <h2 className="font-display text-sm font-medium text-ink/60 uppercase tracking-wide">
             Team load

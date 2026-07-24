@@ -2,10 +2,15 @@
 
 import { Task, TaskStatus, Member } from "@/lib/types";
 
-const COLUMNS: { key: TaskStatus; label: string }[] = [
-  { key: "todo", label: "To do" },
-  { key: "in_progress", label: "In progress" },
-  { key: "done", label: "Done" },
+const COLUMNS: {
+  key: TaskStatus;
+  label: string;
+  dot: string;
+  headerText: string;
+}[] = [
+  { key: "todo", label: "To do", dot: "bg-ink/30", headerText: "text-ink/60" },
+  { key: "in_progress", label: "In progress", dot: "bg-amber", headerText: "text-amber" },
+  { key: "done", label: "Done", dot: "bg-teal", headerText: "text-teal-dark" },
 ];
 
 interface TaskBoardProps {
@@ -26,37 +31,43 @@ export default function TaskBoard({ tasks, members, onStatusChange, recentlyMove
       {COLUMNS.map((col) => {
         const colTasks = tasks.filter((t) => t.status === col.key);
         return (
-          <div key={col.key} className="bg-card/50 rounded-xl p-3 min-h-[200px]">
-            <div className="flex items-center justify-between mb-3 px-1">
-              <h3 className="font-display font-medium text-sm text-ink/70">{col.label}</h3>
-              <span className="font-mono text-xs text-ink/40">{colTasks.length}</span>
+          <div key={col.key} className="bg-card/40 rounded-xl p-3 min-h-[180px]">
+            <div className="flex items-center gap-2 mb-3 px-1">
+              <span className={`h-1.5 w-1.5 rounded-full ${col.dot}`} aria-hidden="true" />
+              <h3 className={`font-display font-medium text-sm ${col.headerText}`}>{col.label}</h3>
+              <span className="font-mono text-xs text-ink/35 ml-auto">{colTasks.length}</span>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {colTasks.length === 0 && (
-                <p className="text-xs text-ink/35 px-1 py-4 text-center">Nothing here.</p>
+                <p className="text-xs text-ink/35 px-2 py-6 text-center border border-dashed border-cardline rounded-lg">
+                  Nothing here
+                </p>
               )}
               {colTasks.map((task) => (
                 <div
                   key={task.id}
-                  className={`bg-white rounded-lg border border-cardline p-3 shadow-sm ${
-                    recentlyMovedTaskIds.has(task.id) ? "animate-slideIn ring-1 ring-teal/40" : ""
+                  className={`bg-white rounded-lg border border-cardline p-3.5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-cardline ${
+                    recentlyMovedTaskIds.has(task.id) ? "animate-slideIn ring-2 ring-teal/30" : ""
                   }`}
                 >
-                  <p className="font-medium text-sm text-ink">{task.title}</p>
+                  <p className="font-medium text-sm text-ink leading-snug">{task.title}</p>
                   {task.description && (
-                    <p className="text-xs text-ink/55 mt-1 leading-relaxed">{task.description}</p>
+                    <p className="text-xs text-ink/55 mt-1.5 leading-relaxed">{task.description}</p>
                   )}
-                  <div className="mt-2 flex items-center justify-between">
-                    <span className="text-[11px] font-mono text-teal-dark bg-teal/10 rounded px-1.5 py-0.5">
-                      {memberName(members, task.assigneeId)} · {task.estimatedHours}h
+                  <div className="mt-2.5 flex items-center flex-wrap gap-1.5">
+                    <span className="text-[11px] font-mono text-teal-dark bg-teal-50 rounded-md px-1.5 py-0.5">
+                      {memberName(members, task.assigneeId)}
+                    </span>
+                    <span className="text-[11px] font-mono text-ink/45 bg-ink/[0.04] rounded-md px-1.5 py-0.5">
+                      {task.estimatedHours}h
                     </span>
                   </div>
-                  <div className="mt-2 flex gap-1">
+                  <div className="mt-2.5 flex gap-1 flex-wrap">
                     {COLUMNS.filter((c) => c.key !== task.status).map((c) => (
                       <button
                         key={c.key}
                         onClick={() => onStatusChange(task.id, c.key)}
-                        className="text-[11px] rounded px-1.5 py-1 bg-ink/5 text-ink/60 hover:bg-ink/10 transition-colors"
+                        className="text-[11px] rounded-md px-2 py-1 bg-ink/[0.04] text-ink/55 hover:bg-ink/[0.08] hover:text-ink/80 transition-colors"
                       >
                         → {c.label}
                       </button>

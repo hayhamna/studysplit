@@ -24,23 +24,48 @@ export default function LoadBar({
 
   return (
     <div
-      className={`rounded-lg border p-3 transition-opacity ${
-        available ? "border-cardline bg-white/60" : "border-coral/40 bg-coral/5 opacity-60"
+      className={`group rounded-xl border p-3.5 transition-all duration-200 ${
+        available
+          ? "border-cardline bg-white hover:border-teal/40 hover:shadow-sm"
+          : "border-coral/30 bg-coral-50/60 opacity-70"
       }`}
     >
       <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="font-display font-medium text-ink truncate">{name}</p>
-          <p className="font-mono text-[11px] text-ink/50 truncate">{strengths || "no strengths listed"}</p>
+        <div className="min-w-0 flex items-center gap-2">
+          <span
+            className={`h-7 w-7 shrink-0 rounded-full flex items-center justify-center text-[11px] font-display font-medium ${
+              available ? "bg-teal-50 text-teal-dark" : "bg-coral-50 text-coral"
+            }`}
+            aria-hidden="true"
+          >
+            {name.trim().charAt(0).toUpperCase() || "?"}
+          </span>
+          <div className="min-w-0">
+            <p className="font-display font-medium text-ink text-sm truncate leading-tight">{name}</p>
+            <p className="font-mono text-[10.5px] text-ink/45 truncate leading-tight mt-0.5">
+              {strengths || "no strengths listed"}
+            </p>
+          </div>
         </div>
-        <span className="font-mono text-xs text-ink/60 whitespace-nowrap pt-0.5">
+        <span
+          className={`font-mono text-[11px] whitespace-nowrap pt-1 ${
+            overloaded ? "text-coral font-medium" : "text-ink/55"
+          }`}
+        >
           {assignedHours}h / {capacityHours}h
         </span>
       </div>
 
-      <div className="mt-2 h-2 w-full rounded-full bg-card overflow-hidden">
+      <div
+        className="mt-2.5 h-2 w-full rounded-full bg-card overflow-hidden"
+        role="progressbar"
+        aria-valuenow={Math.round(pct)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`${name}'s workload`}
+      >
         <div
-          className={`h-full rounded-full transition-all duration-500 ease-out ${
+          className={`h-full rounded-full transition-[width] duration-700 ease-out ${
             overloaded ? "bg-coral" : "bg-teal"
           }`}
           style={{ width: `${pct}%` }}
@@ -50,13 +75,22 @@ export default function LoadBar({
       <button
         onClick={onToggleUnavailable}
         disabled={rebalancing}
-        className={`mt-2 w-full rounded-md px-2 py-1.5 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+        className={`mt-2.5 w-full rounded-lg px-2 py-1.5 text-xs font-medium transition-all duration-150 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 ${
           available
-            ? "bg-ink/5 text-ink/70 hover:bg-coral/10 hover:text-coral"
+            ? "bg-ink/[0.04] text-ink/60 hover:bg-coral-50 hover:text-coral"
             : "bg-coral text-white hover:bg-coral-light"
         }`}
       >
-        {available ? `${name} is unavailable` : rebalancing ? "Rebalancing…" : "Rebalance tasks"}
+        {available ? (
+          `${name} is unavailable`
+        ) : rebalancing ? (
+          <span className="inline-flex items-center gap-1.5 justify-center w-full">
+            <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulseSoft" />
+            Rebalancing…
+          </span>
+        ) : (
+          "Rebalance tasks"
+        )}
       </button>
     </div>
   );
