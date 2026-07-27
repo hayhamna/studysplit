@@ -19,15 +19,15 @@ export default function Logo({ withWordmark = true, size = 28, className = "" }:
         <path d="M16 6V26" stroke="#2F6F5E" strokeWidth="2.2" strokeLinecap="round" />
         <path
           d="M16 9L6 12.5M16 9L26 12.5"
-          stroke="#1B1F2A"
+          stroke="#1B2B3A"
           strokeWidth="2.2"
           strokeLinecap="round"
         />
         <circle cx="6" cy="12.5" r="3.4" fill="#2F6F5E" />
-        <circle cx="26" cy="12.5" r="3.4" fill="#E4572E" />
+        <circle cx="26" cy="12.5" r="3.4" fill="#C9A227" />
         <path
           d="M12 26H20"
-          stroke="#1B1F2A"
+          stroke="#1B2B3A"
           strokeWidth="2.2"
           strokeLinecap="round"
         />

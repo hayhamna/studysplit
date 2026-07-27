@@ -108,7 +108,7 @@ export default function HomePage() {
   return (
     <main>
       {/* Nav */}
-      <nav className="max-w-5xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between">
+      <nav className="max-w-5xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between border-b border-cardline">
         <Logo size={26} />
         <a
           href="#create"
@@ -117,6 +117,7 @@ export default function HomePage() {
           New project
         </a>
       </nav>
+      <div className="h-[2px] bg-gold/70" aria-hidden="true" />
 
       {/* Hero */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 sm:pt-14 pb-16 sm:pb-20">
@@ -214,7 +215,7 @@ export default function HomePage() {
             },
           ].map((s) => (
             <div key={s.step} className="bg-white rounded-xl border border-cardline p-5">
-              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-50 text-teal-dark font-mono text-xs font-medium mb-3">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border-[1.5px] border-gold text-ink font-mono text-xs font-medium mb-3 bg-white">
                 {s.step}
               </span>
               <p className="font-display font-medium text-ink text-sm mb-1.5">{s.title}</p>

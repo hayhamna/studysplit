@@ -4,26 +4,27 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        paper: "#EDEEE9",
-        ink: "#1B1F2A",
+        paper: "#F7F6F2",
+        ink: "#1B2B3A",
         teal: {
           DEFAULT: "#2F6F5E",
           light: "#4C8B79",
           dark: "#1F4E42",
           50: "#E8F2EE",
         },
+        gold: {
+          DEFAULT: "#C9A227",
+          light: "#DBBB5E",
+          dark: "#A8841C",
+          50: "#F8F0DA",
+        },
         coral: {
-          DEFAULT: "#E4572E",
-          light: "#F0805C",
-          50: "#FCEBE3",
+          DEFAULT: "#A63D2F",
+          light: "#C15A47",
+          50: "#F5E6E1",
         },
-        amber: {
-          DEFAULT: "#C7862B",
-          light: "#DDA857",
-          50: "#F8EEDD",
-        },
-        card: "#DCDFD9",
-        cardline: "#C7CBC2",
+        card: "#EFEBE1",
+        cardline: "#DCD7C9",
       },
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],

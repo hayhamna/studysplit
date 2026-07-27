@@ -9,7 +9,7 @@ const COLUMNS: {
   headerText: string;
 }[] = [
   { key: "todo", label: "To do", dot: "bg-ink/30", headerText: "text-ink/60" },
-  { key: "in_progress", label: "In progress", dot: "bg-amber", headerText: "text-amber" },
+  { key: "in_progress", label: "In progress", dot: "bg-gold", headerText: "text-gold-dark" },
   { key: "done", label: "Done", dot: "bg-teal", headerText: "text-teal-dark" },
 ];
 
@@ -46,7 +46,7 @@ export default function TaskBoard({ tasks, members, onStatusChange, recentlyMove
               {colTasks.map((task) => (
                 <div
                   key={task.id}
-                  className={`bg-white rounded-lg border border-cardline p-3.5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-cardline ${
+                  className={`bg-white rounded-lg border border-cardline p-3.5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-gold/50 ${
                     recentlyMovedTaskIds.has(task.id) ? "animate-slideIn ring-2 ring-teal/30" : ""
                   }`}
                 >
