@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { listProjects, saveProject, deleteProject } from "@/lib/storage";
 import { Member, Project, ProjectSummary, Task } from "@/lib/types";
-import Logo from "@/components/Logo";
+import TopNav from "@/components/TopNav";
 
 interface DraftMember {
   id: string;
@@ -108,16 +108,17 @@ export default function HomePage() {
   return (
     <main>
       {/* Nav */}
-      <nav className="max-w-5xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between border-b border-cardline">
-        <Logo size={26} />
-        <a
-          href="#create"
-          className="text-sm font-medium text-ink/70 hover:text-teal-dark transition-colors px-3.5 py-2 rounded-lg hover:bg-ink/[0.04]"
-        >
-          New project
-        </a>
-      </nav>
-      <div className="h-[2px] bg-gold/70" aria-hidden="true" />
+      <TopNav
+        maxWidth="max-w-5xl"
+        rightSlot={
+          <a
+            href="#create"
+            className="text-sm font-medium text-ink/70 hover:text-teal-dark transition-colors px-3.5 py-2 rounded-lg hover:bg-ink/[0.04]"
+          >
+            New project
+          </a>
+        }
+      />
 
       {/* Hero */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 sm:pt-14 pb-16 sm:pb-20">
@@ -164,7 +165,7 @@ export default function HomePage() {
                   { name: "Marcus", pct: 88, available: true },
                   { name: "Ahmed", pct: 0, available: false },
                 ].map((m) => (
-                  <div key={m.name} className={`rounded-lg border p-2.5 ${m.available ? "border-cardline bg-white" : "border-coral/30 bg-coral-50/60 opacity-70"}`}>
+                  <div key={m.name} className={`rounded-lg border bg-white p-2.5 ${m.available ? "border-cardline" : "border-cardline border-l-[3px] border-l-coral"}`}>
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-xs font-medium text-ink">{m.name}</span>
                       {!m.available && (

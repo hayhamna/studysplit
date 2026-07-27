@@ -8,7 +8,7 @@ import { Project, Task, TaskStatus } from "@/lib/types";
 import LoadBar from "@/components/LoadBar";
 import TaskBoard from "@/components/TaskBoard";
 import RationalePanel from "@/components/RationalePanel";
-import Logo from "@/components/Logo";
+import TopNav from "@/components/TopNav";
 
 export default function ProjectPage() {
   const params = useParams();
@@ -171,70 +171,88 @@ export default function ProjectPage() {
     }
   }
 
+  const totalHours = project.tasks.reduce((sum, t) => sum + t.estimatedHours, 0);
+  const doneCount = project.tasks.filter((t) => t.status === "done").length;
+
   return (
-    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-      <div className="flex items-center justify-between mb-6">
-        <Logo size={22} />
-        <button
-          onClick={() => router.push("/")}
-          className="text-xs font-mono text-ink/40 hover:text-teal-dark transition-colors"
-        >
-          ← all projects
-        </button>
-      </div>
+    <main className="pb-12">
+      <TopNav
+        rightSlot={
+          <button
+            onClick={() => router.push("/")}
+            className="text-xs font-mono text-ink/40 hover:text-teal-dark transition-colors"
+          >
+            ← all projects
+          </button>
+        }
+      />
 
-      <h1 className="font-display text-2xl sm:text-3xl font-semibold text-ink mb-1.5 tracking-tight">
-        {project.name}
-      </h1>
-      <p className="text-sm text-ink/50 mb-6 max-w-2xl leading-relaxed">{project.assignmentDescription}</p>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10">
+        <h1 className="font-display text-2xl sm:text-3xl font-semibold text-ink mb-1.5 tracking-tight">
+          {project.name}
+        </h1>
+        <p className="text-sm text-ink/50 mb-3 max-w-2xl leading-relaxed">{project.assignmentDescription}</p>
 
-      <div className="space-y-4 mb-2">
-        {project.breakdownRationale && (
-          <RationalePanel
-            label="original split"
-            text={project.breakdownRationale}
-            tone="teal"
-            onDismiss={() => updateProject((p) => ({ ...p, breakdownRationale: undefined }))}
-          />
-        )}
+        <div className="flex flex-wrap gap-2 mb-6">
+          <span className="text-[11px] font-mono text-ink/55 bg-white border border-cardline rounded-md px-2 py-1">
+            {project.members.length} teammates
+          </span>
+          <span className="text-[11px] font-mono text-ink/55 bg-white border border-cardline rounded-md px-2 py-1">
+            {doneCount}/{project.tasks.length} tasks done
+          </span>
+          <span className="text-[11px] font-mono text-ink/55 bg-white border border-cardline rounded-md px-2 py-1">
+            {totalHours}h total effort
+          </span>
+        </div>
 
-        {rationale && <RationalePanel {...rationale} onDismiss={() => setRationale(null)} />}
-
-        {error && (
-          <p className="text-sm text-coral bg-coral-50 border border-coral/20 rounded-lg px-3 py-2">{error}</p>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
-        <aside className="lg:col-span-1 space-y-3">
-          <h2 className="font-display text-sm font-medium text-ink/60 uppercase tracking-wide">
-            Team load
-          </h2>
-          {project.members.map((m) => (
-            <LoadBar
-              key={m.id}
-              name={m.name}
-              strengths={m.strengths}
-              assignedHours={assignedHoursByMember[m.id] ?? 0}
-              capacityHours={m.hoursPerWeek}
-              available={m.available}
-              rebalancing={rebalancingMemberId === m.id}
-              onToggleUnavailable={() => handleRebalance(m.id)}
+        <div className="space-y-4 mb-2">
+          {project.breakdownRationale && (
+            <RationalePanel
+              label="original split"
+              text={project.breakdownRationale}
+              tone="teal"
+              onDismiss={() => updateProject((p) => ({ ...p, breakdownRationale: undefined }))}
             />
-          ))}
-        </aside>
+          )}
 
-        <section className="lg:col-span-3">
-          <h2 className="font-display text-sm font-medium text-ink/60 uppercase tracking-wide mb-3">
-            Tasks
-          </h2>
-          <TaskBoard
-            tasks={project.tasks}
-            members={project.members}
-            onStatusChange={handleStatusChange}
-            recentlyMovedTaskIds={recentlyMovedTaskIds}
-          />
-        </section>
+          {rationale && <RationalePanel {...rationale} onDismiss={() => setRationale(null)} />}
+
+          {error && (
+            <p className="text-sm text-coral bg-coral-50 border border-coral/20 rounded-lg px-3 py-2">{error}</p>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
+          <aside className="lg:col-span-1 space-y-3">
+            <h2 className="font-display text-sm font-medium text-ink/60 uppercase tracking-wide">
+              Team load
+            </h2>
+            {project.members.map((m) => (
+              <LoadBar
+                key={m.id}
+                name={m.name}
+                strengths={m.strengths}
+                assignedHours={assignedHoursByMember[m.id] ?? 0}
+                capacityHours={m.hoursPerWeek}
+                available={m.available}
+                rebalancing={rebalancingMemberId === m.id}
+                onToggleUnavailable={() => handleRebalance(m.id)}
+              />
+            ))}
+          </aside>
+
+          <section className="lg:col-span-3">
+            <h2 className="font-display text-sm font-medium text-ink/60 uppercase tracking-wide mb-3">
+              Tasks
+            </h2>
+            <TaskBoard
+              tasks={project.tasks}
+              members={project.members}
+              onStatusChange={handleStatusChange}
+              recentlyMovedTaskIds={recentlyMovedTaskIds}
+            />
+          </section>
+        </div>
       </div>
     </main>
   );

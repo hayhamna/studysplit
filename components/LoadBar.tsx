@@ -24,10 +24,10 @@ export default function LoadBar({
 
   return (
     <div
-      className={`group rounded-xl border p-3.5 transition-all duration-200 ${
+      className={`group rounded-xl border bg-white p-3.5 transition-all duration-200 ${
         available
-          ? "border-cardline bg-white hover:border-teal/40 hover:shadow-sm"
-          : "border-coral/30 bg-coral-50/60 opacity-70"
+          ? "border-cardline hover:border-teal/40 hover:shadow-sm"
+          : "border-cardline border-l-[3px] border-l-coral"
       }`}
     >
       <div className="flex items-start justify-between gap-2">
@@ -41,7 +41,16 @@ export default function LoadBar({
             {name.trim().charAt(0).toUpperCase() || "?"}
           </span>
           <div className="min-w-0">
-            <p className="font-display font-medium text-ink text-sm truncate leading-tight">{name}</p>
+            <div className="flex items-center gap-1.5">
+              <p className={`font-display font-medium text-sm truncate leading-tight ${available ? "text-ink" : "text-ink/60"}`}>
+                {name}
+              </p>
+              {!available && (
+                <span className="shrink-0 text-[9.5px] font-mono uppercase tracking-wide text-coral bg-coral-50 rounded px-1 py-0.5">
+                  unavailable
+                </span>
+              )}
+            </div>
             <p className="font-mono text-[10.5px] text-ink/45 truncate leading-tight mt-0.5">
               {strengths || "no strengths listed"}
             </p>
@@ -66,7 +75,7 @@ export default function LoadBar({
       >
         <div
           className={`h-full rounded-full transition-[width] duration-700 ease-out ${
-            overloaded ? "bg-coral" : "bg-teal"
+            overloaded ? "bg-coral" : available ? "bg-teal" : "bg-ink/20"
           }`}
           style={{ width: `${pct}%` }}
         />
