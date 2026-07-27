@@ -18,8 +18,7 @@ Nothing here is a to-do list clone with an AI wrapper — the specific, memorabl
 
 
 
-https://studysplit-yourname.vercel.app
-
+https://studysplit.vercel.app
 ## c. Features
 
 - Create a project from an assignment description + a list of teammates (name, strengths, weekly available hours)
