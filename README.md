@@ -16,9 +16,9 @@ Nothing here is a to-do list clone with an AI wrapper — the specific, memorabl
 
 ## b. Live URL
 
-**[Add your deployed Vercel URL here after deployment]**
 
-`https://studysplit-yourname.vercel.app`
+
+https://studysplit-yourname.vercel.app
 
 ## c. Features
 
@@ -104,19 +104,16 @@ Both prompts and their JSON schemas are in [`lib/ai.ts`](./lib/ai.ts); the two A
 
 **Note on storage:** the app intentionally ships with zero backend database so it deploys with a single environment variable. Swapping `lib/storage.ts` for Supabase (Postgres, free tier) to support multi-device sync and real accounts is a natural next step, noted here rather than built, to keep the deploy simple and reliable for grading.
 
+
 ## f. Screenshots
 
-> Replace these with real screenshots of your deployed app before submitting.
-> Suggested shots: (1) the home page / create-project form, (2) the board right
-> after the AI generates the first task split with the rationale panel visible,
-> (3) a teammate's load bar mid-rebalance or right after, showing tasks having
-> moved, (4) the rationale panel explaining a rebalance.
+![Home page](./screenshots/1-home.png)
 
-`![Home page](./screenshots/1-home.png)`
-`![Initial split](./screenshots/2-initial-split.png)`
-`![Rebalance in action](./screenshots/3-rebalance.png)`
-`![Rebalance rationale](./screenshots/4-rationale.png)`
+![Initial split](./screenshots/2-initial-split.png)
 
+![Rebalance in action](./screenshots/3-rebalance.png)
+
+![Rebalance rationale](./screenshots/4-rationale.png)
 ## g. How to run the project
 
 ### Prerequisites
