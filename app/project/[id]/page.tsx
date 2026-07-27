@@ -161,9 +161,13 @@ export default function ProjectPage() {
       }));
 
       setRecentlyMovedTaskIds(movedIds);
-      setTimeout(() => setRecentlyMovedTaskIds(new Set()), 1200);
+      setTimeout(() => setRecentlyMovedTaskIds(new Set()), 2600);
 
-      setRationale({ label: "rebalanced", text: data.rationale, tone: "coral" });
+      setRationale({
+        label: `rebalanced · ${movedIds.size} task${movedIds.size === 1 ? "" : "s"} moved`,
+        text: data.rationale,
+        tone: "coral",
+      });
     } catch (err: any) {
       setError(err.message ?? "Something went wrong rebalancing tasks.");
     } finally {
